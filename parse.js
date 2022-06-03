@@ -17,10 +17,10 @@ const ignore_vars = [];
  * toTagoFormat({ myvariable: { value: myvalue, unit: 'C', metadata: { color: 'green' }} , anothervariable: anothervalue... })
  *
  * @param {Object} object_item Object containing key and value.
- * @param {String} serie Serie for the variables
+ * @param {String} group Group for the variables
  * @param {String} prefix Add a prefix to the variables name
  */
-function toTagoFormat(object_item, serie, prefix = '') {
+function toTagoFormat(object_item, group, prefix = '') {
   const result = [];
   for (const key in object_item) {
     if (ignore_vars.includes(key)) continue;
@@ -29,7 +29,7 @@ function toTagoFormat(object_item, serie, prefix = '') {
       result.push({
         variable: object_item[key].variable || `${prefix}${key}`,
         value: object_item[key].value,
-        serie: object_item[key].serie || serie,
+        group: object_item[key].group || group,
         metadata: object_item[key].metadata,
         location: object_item[key].location,
         unit: object_item[key].unit,
@@ -38,7 +38,7 @@ function toTagoFormat(object_item, serie, prefix = '') {
       result.push({
         variable: `${prefix}${key}`,
         value: object_item[key],
-        serie,
+        group,
       });
     }
   }
@@ -49,8 +49,8 @@ function toTagoFormat(object_item, serie, prefix = '') {
 // Check if what is being stored is the ttn_payload.
 // Payload is an environment variable. Is where what is being inserted to your device comes in.
 if (!payload[0].variable) {
-  // Get a unique serie for the incoming data.
-  const serie = payload[0].serie || new Date().getTime();
+  // Get a unique group for the incoming data.
+  const group = payload[0].group || String(new Date().getTime());
   
-  payload = toTagoFormat(payload[0], serie);
+  payload = toTagoFormat(payload[0], group);
 }
